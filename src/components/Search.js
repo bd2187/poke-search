@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Search = function() {
+    const [inputValue, setInputValue] = useState("");
+
+    const updateSearchValue = function updateSearchValue(ev) {
+        setInputValue(ev.target.value);
+    };
+
     return (
         <form>
-            <input type="text" />
+            <input
+                value={inputValue}
+                type="text"
+                onChange={updateSearchValue}
+            />
         </form>
     );
 };
