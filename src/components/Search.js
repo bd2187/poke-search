@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 
-const Search = function() {
-    const [inputValue, setInputValue] = useState("");
-
-    const updateSearchValue = function updateSearchValue(ev) {
-        setInputValue(ev.target.value);
-    };
-
+const Search = function({ searchValue, updateSearchValue }) {
     return (
         <form>
             <input
-                value={inputValue}
+                value={searchValue}
                 type="text"
-                onChange={updateSearchValue}
+                onChange={ev => updateSearchValue(ev.target.value)}
             />
         </form>
     );
