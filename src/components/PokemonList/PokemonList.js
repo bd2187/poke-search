@@ -46,7 +46,9 @@ const PokemonList = ({ match }) => {
             }
         };
 
-        return (window.onscroll = null);
+        return () => {
+            window.onscroll = null;
+        };
     }, []);
 
     return null;
