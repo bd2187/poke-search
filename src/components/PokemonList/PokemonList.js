@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PokemonThumbnail from "../PokemonThumbnail/PokemonThumbnail";
 
 class PokemonList extends React.Component {
     constructor(props) {
@@ -81,7 +82,12 @@ class PokemonList extends React.Component {
         return (
             <ul>
                 {this.state.pokemon.map(pokemon => {
-                    return <li key={pokemon.name}>{pokemon.name}</li>;
+                    return (
+                        <PokemonThumbnail
+                            key={pokemon.name}
+                            pokemon={pokemon}
+                        />
+                    );
                 })}
             </ul>
         );
