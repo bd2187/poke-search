@@ -1,57 +1,91 @@
 import React, { useState, useEffect } from "react";
 
-const PokemonList = ({ match }) => {
-    const [state, setState] = useState({
-        loading: true,
-        error: false,
-        pokemon: [],
-        offset: 0
-    });
+class PokemonList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: true,
+            error: false,
+            pokemon: [],
+            offset: 0
+        };
+    }
 
-    const fetchPokemon = function() {
-        var endpoint = "";
-        {
-            let limit =
-                parseInt(match.params.offset) > 50
-                    ? parseInt(match.params.offset)
-                    : 50;
+    /**
+     * Calls fetchPokemon to render pokemon to DOM.
+     * Adds scroll event listener to check if user
+     * scrolled to bottom of webpage
+     */
+    componentDidMount() {
+        this.fetchPokemon(this.props.match.params.offset);
 
-            var endpoint =
-                parseInt(match.params.offset) > 0 && state.offset === 0
-                    ? `https://pokeapi.co/api/v2/pokemon?limit=${limit}`
-                    : `https://pokeapi.co/api/v2/pokemon?limit=50&offset=${state.offset}`;
-        }
+        window.onscroll = ev => {
+            var doc = document.getElementsByTagName("html")[0];
+            var offset = doc.scrollTop + window.innerHeight;
+            var height = doc.offsetHeight;
 
-        fetch(endpoint)
-            .then(res => res.json)
-            .then(data =>
-                setState({
-                    loading: false,
-                    pokemon: [...state.pokemon, ...data.results],
-                    offset: state.offset + 50
-                })
-            )
-            .catch(() => setState({ loading: false, error: true }));
-    };
-
-    useEffect(function() {
-        fetchPokemon();
-
-        window.onscroll = function(ev) {
-            if (
-                window.innerHeight + window.scrollY >=
-                document.body.offsetHeight
-            ) {
-                console.warn("bottom");
+            if (offset === height) {
+                this.setState(state => {
+                    return { offset: state.offset + 50, loading: true };
+                });
             }
         };
+    }
+    /**
+     * Removes scroll event listener
+     */
+    componentWillUnmount() {
+        window.onscroll = null;
+    }
 
-        return () => {
-            window.onscroll = null;
-        };
-    }, []);
+    /**
+     * Calls fetchPokemon whenever this.state.offset is updated
+     */
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.offset !== this.state.offset) {
+            this.fetchPokemon(this.state.offset);
+        }
+    }
 
-    return null;
-};
+    /**
+     *
+     * @param Number offset
+     * @return
+     */
+    fetchPokemon(offset) {
+        var endpoint = "";
+
+        let limit = parseInt(offset) > 50 ? parseInt(offset) : 50;
+
+        var endpoint =
+            parseInt(offset) > 0 && this.state.offset === 0
+                ? `https://pokeapi.co/api/v2/pokemon?limit=${limit}`
+                : `https://pokeapi.co/api/v2/pokemon?limit=50&offset=${this.state.offset}`;
+
+        fetch(endpoint)
+            .then(res => res.json())
+            .then(data => {
+                this.setState({
+                    loading: false,
+                    pokemon: [...this.state.pokemon, ...data.results],
+                    offset: limit
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                this.setState({ loading: false, error: true });
+            });
+    }
+
+    render() {
+        return (
+            <ul>
+                {this.state.pokemon.map(pokemon => {
+                    return <li key={pokemon.name}>{pokemon.name}</li>;
+                })}
+            </ul>
+        );
+    }
+}
 
 export default PokemonList;
