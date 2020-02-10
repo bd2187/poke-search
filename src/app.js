@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { render } from "react-dom";
 
-import Loading from "./components/Loading";
 import PokemonList from "./components/PokemonList/PokemonList";
 import Navigation from "./components/Navigaton/Navigation";
-import Search from "./components/Search";
+import Pokemon from "./components/Pokemon/Pokemon";
 
 const App = function() {
     const [state, setState] = useState({
@@ -63,6 +62,8 @@ const App = function() {
                         );
                     }}
                 />
+
+                <Route exact path="/pokemon/:name" component={Pokemon} />
             </Switch>
         </Router>
     );
