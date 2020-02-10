@@ -8,8 +8,8 @@ const PokemonThumbnail = function({ pokemon }) {
     var imageURL = `https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${id}.png`;
     return (
         <li>
-            {pokemon.name}
             <img alt={pokemon.name} src={imageURL} />
+            {pokemon.name}
         </li>
     );
 };
