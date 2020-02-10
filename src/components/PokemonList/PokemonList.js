@@ -18,7 +18,7 @@ class PokemonList extends React.Component {
         return filteredPokemon;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         const query = this.props.match.params.query;
         if (prevProps.pokemon.length !== this.props.pokemon.length) {
             if (query) {
@@ -48,8 +48,19 @@ class PokemonList extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        window.onscroll = null;
+    }
+
     componentDidMount() {
-        window.onscroll = ev => {
+        if (this.props.pokemon.length > 0) {
+            this.setState({
+                offset: 50,
+                pokemonToDisplay: [...this.props.pokemon.slice(0, 50)]
+            });
+        }
+
+        window.onscroll = () => {
             var doc = document.getElementsByTagName("html")[0];
             var windowOffset = doc.scrollTop + window.innerHeight;
             var height = doc.offsetHeight;
