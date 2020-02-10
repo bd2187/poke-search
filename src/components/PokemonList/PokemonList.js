@@ -5,92 +5,91 @@ class PokemonList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true,
-            error: false,
-            pokemon: [],
-            offset: 0
+            offset: 50,
+            pokemonToDisplay: []
         };
     }
 
-    /**
-     * Calls fetchPokemon to render pokemon to DOM.
-     * Adds scroll event listener to check if user
-     * scrolled to bottom of webpage
-     */
-    componentDidMount() {
-        this.fetchPokemon(this.props.match.params.offset);
+    filterPokemon(query) {
+        var filteredPokemon = this.props.pokemon.filter(pokemon => {
+            return pokemon.name.includes(query);
+        });
 
+        return filteredPokemon;
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const query = this.props.match.params.query;
+        if (prevProps.pokemon.length !== this.props.pokemon.length) {
+            if (query) {
+                this.setState({
+                    pokemonToDisplay: this.filterPokemon(query)
+                });
+            } else {
+                this.setState({
+                    offset: 50,
+                    pokemonToDisplay: [...this.props.pokemon.slice(0, 50)]
+                });
+            }
+        }
+
+        if (prevProps.match.params.query !== this.props.match.params.query) {
+            if (query) {
+                this.setState({
+                    pokemonToDisplay: this.filterPokemon(query)
+                });
+            } else {
+                this.setState({
+                    pokemonToDisplay: [
+                        ...this.props.pokemon.slice(0, this.state.offset)
+                    ]
+                });
+            }
+        }
+    }
+
+    componentDidMount() {
         window.onscroll = ev => {
             var doc = document.getElementsByTagName("html")[0];
-            var offset = doc.scrollTop + window.innerHeight;
+            var windowOffset = doc.scrollTop + window.innerHeight;
             var height = doc.offsetHeight;
-
-            if (offset === height) {
-                this.setState(state => {
-                    return { offset: state.offset + 50, loading: true };
+            if (windowOffset === height && !this.props.match.params.query) {
+                var updatedOffset = this.state.offset + 50;
+                this.setState({
+                    offset: updatedOffset,
+                    pokemonToDisplay: [
+                        ...this.state.pokemonToDisplay,
+                        ...this.props.pokemon.slice(
+                            this.state.offset,
+                            updatedOffset
+                        )
+                    ]
                 });
             }
         };
     }
-    /**
-     * Removes scroll event listener
-     */
-    componentWillUnmount() {
-        window.onscroll = null;
-    }
-
-    /**
-     * Calls fetchPokemon whenever this.state.offset is updated
-     */
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.offset !== this.state.offset) {
-            this.fetchPokemon(this.state.offset);
-        }
-    }
-
-    /**
-     *
-     * @param Number offset
-     * @return
-     */
-    fetchPokemon(offset) {
-        var endpoint = "";
-
-        let limit = parseInt(offset) > 50 ? parseInt(offset) : 50;
-
-        var endpoint =
-            parseInt(offset) > 0 && this.state.offset === 0
-                ? `https://pokeapi.co/api/v2/pokemon?limit=${limit}`
-                : `https://pokeapi.co/api/v2/pokemon?limit=50&offset=${this.state.offset}`;
-
-        fetch(endpoint)
-            .then(res => res.json())
-            .then(data => {
-                this.setState({
-                    loading: false,
-                    pokemon: [...this.state.pokemon, ...data.results],
-                    offset: limit
-                });
-            })
-            .catch(err => {
-                console.error(err);
-                this.setState({ loading: false, error: true });
-            });
-    }
 
     render() {
-        return (
-            <ul>
-                {this.state.pokemon.map(pokemon => {
-                    return (
-                        <PokemonThumbnail
-                            key={pokemon.name}
-                            pokemon={pokemon}
-                        />
-                    );
-                })}
-            </ul>
-        );
+        if (this.props.loading) {
+            return <p>loading...</p>;
+        } else if (this.props.error) {
+            return <p>error</p>;
+        } else if (this.state.pokemonToDisplay.length === 0) {
+            return <p>no results found</p>;
+        } else {
+            return (
+                <ul>
+                    {this.state.pokemonToDisplay.map(pokemon => {
+                        return (
+                            <PokemonThumbnail
+                                key={pokemon.name}
+                                pokemon={pokemon}
+                            />
+                        );
+                    })}
+                </ul>
+            );
+        }
     }
 }
 
