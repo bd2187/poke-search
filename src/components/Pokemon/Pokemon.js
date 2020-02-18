@@ -52,10 +52,14 @@ const Pokemon = function({ match }) {
                     data: res
                 });
 
-                console.warn(res.id);
                 return fetch(
-                    `https://pokeapi.co/api/v2/evolution-chain/${res.id}`
+                    `https://pokeapi.co/api/v2/pokemon-species/${res.id}`
                 );
+            })
+
+            .then(res => res.json())
+            .then(res => {
+                return fetch(res.evolution_chain.url);
             })
             .then(res => res.json())
             .then(res => {
@@ -121,8 +125,7 @@ const Pokemon = function({ match }) {
                     <h2>Weight</h2>
                     <p>{weight} lbs.</p>
 
-                    {/* todo: fix chain */}
-                    {/* {chain.length > 0 ? (
+                    {chain.length > 0 ? (
                         <>
                             <h2>Evolutions</h2>
                             <ul>
@@ -140,7 +143,7 @@ const Pokemon = function({ match }) {
                                 })}
                             </ul>
                         </>
-                    ) : null} */}
+                    ) : null}
                 </div>
             );
         }
