@@ -10,7 +10,7 @@ const PokemonThumbnail = function({ pokemon }) {
         <li>
             <Link to={`/pokemon/${pokemon.name}`}>
                 <img alt={pokemon.name} src={imageURL} />
-                {pokemon.name}
+                <h1>{pokemon.name}</h1>
             </Link>
         </li>
     );
