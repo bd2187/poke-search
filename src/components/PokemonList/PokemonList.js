@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PokemonThumbnail from "../PokemonThumbnail/PokemonThumbnail";
+import { List } from "./PokemonList_styles";
 
 class PokemonList extends React.Component {
     constructor(props) {
@@ -89,7 +90,7 @@ class PokemonList extends React.Component {
             return <p>no results found</p>;
         } else {
             return (
-                <ul>
+                <List>
                     {this.state.pokemonToDisplay.map(pokemon => {
                         return (
                             <PokemonThumbnail
@@ -98,7 +99,7 @@ class PokemonList extends React.Component {
                             />
                         );
                     })}
-                </ul>
+                </List>
             );
         }
     }
