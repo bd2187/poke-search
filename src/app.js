@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./styles/reset.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { render } from "react-dom";
 
