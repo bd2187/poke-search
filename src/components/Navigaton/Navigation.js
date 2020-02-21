@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, withRouter } from "react-router-dom";
+import { Nav } from "./Navigation_styles";
 
 const Navigation = function({ history }) {
     const [state, setState] = useState({
@@ -21,10 +22,11 @@ const Navigation = function({ history }) {
     };
 
     return (
-        <div>
+        <Nav>
             <h1>
                 <Link to="/">Logo</Link>
             </h1>
+
             <form onSubmit={onSubmit}>
                 <input
                     type="text"
@@ -34,7 +36,7 @@ const Navigation = function({ history }) {
                 />
                 <input type="Submit" value="Submit" readOnly />
             </form>
-        </div>
+        </Nav>
     );
 };
 
